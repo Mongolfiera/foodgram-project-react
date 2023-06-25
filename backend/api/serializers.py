@@ -1,26 +1,12 @@
-import base64
-
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
+from api.fields import Base64ImageField
 from recipes.models import Follow, Ingredient, IngredientInRecipe, Recipe, Tag
 
 User = get_user_model()
-
-
-class Base64ImageField(serializers.ImageField):
-    """Декодирование изображений."""
-
-    def to_internal_value(self, data):
-        """Декодирует изображения из формата base64."""
-        if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-        return super().to_internal_value(data)
 
 
 class CustomUserSerializer(UserSerializer):
@@ -224,14 +210,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Теги не могут повторяться.')
         return tags
 
-    @transaction.atomic
-    def create(self, validated_data):
-        """Сериализация создания рецепта."""
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
-        recipe.tags.set(tags)
-
+    def save_ingredients(self, recipe, ingredients):
         IngredientInRecipe.objects.bulk_create(
             [
                 IngredientInRecipe(
@@ -242,6 +221,16 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 for ingredient in ingredients
             ],
         )
+        return ingredients
+
+    @transaction.atomic
+    def create(self, validated_data):
+        """Сериализация создания рецепта."""
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        self.save_ingredients(recipe, ingredients)
         return recipe
 
     @transaction.atomic
@@ -253,16 +242,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.tags.set(tags)
         if ingredients:
             instance.ingredients.clear()
-            IngredientInRecipe.objects.bulk_create(
-                [
-                    IngredientInRecipe(
-                        recipe=instance,
-                        ingredient=ingredient.get('ingredient'),
-                        amount=ingredient.get('amount'),
-                    )
-                    for ingredient in ingredients
-                ],
-            )
+            self.save_ingredients(instance, ingredients)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):

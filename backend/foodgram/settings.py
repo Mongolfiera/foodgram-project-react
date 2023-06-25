@@ -8,10 +8,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t$-dj9im4)ofg33ph^t8ijtk@13g!isqi(0dzz*zqf5$xtssj%'
+SECRET_KEY = os.getenv(
+    'SECRET_KEY',
+    default='django-insecure-t$-dj9im4)ofg33ph^t8ijtk@13g!isqi(0dzz*zqf5$xtssj%',
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
