@@ -211,6 +211,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return tags
 
     def save_ingredients(self, recipe, ingredients):
+        """Сохранение ингредиентов в рецепте."""
         IngredientInRecipe.objects.bulk_create(
             [
                 IngredientInRecipe(

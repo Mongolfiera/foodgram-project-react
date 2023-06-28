@@ -115,6 +115,7 @@ class RecipeViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
     def add_to(self, model, recipe, user):
+        """Добавление рецепта в список."""
         if model.objects.filter(user=user, recipe=recipe).exists():
             return Response(
                 {'errors': 'Рецепт уже добавлен.'},
@@ -123,10 +124,11 @@ class RecipeViewSet(ModelViewSet):
         model.objects.create(user=user, recipe=recipe)
         return Response(
             RecipeShortSerializer(recipe).data,
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
 
     def delete_from(self, model, recipe, user):
+        """Удаление рецепта из списка."""
         obj = model.objects.filter(user=user, recipe=recipe)
         if obj.exists():
             obj.delete()
