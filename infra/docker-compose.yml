@@ -7,7 +7,7 @@ volumes:
 
 services:
   db:
-    container_name: foodgram_db
+    container_name: db
     image: postgres:13.0-alpine
     volumes:
       - db_data:/var/lib/postgresql/data/
@@ -16,7 +16,7 @@ services:
 
   backend:
     image: mongolfierad/foodgram_backend:latest
-    container_name: foodgram_backend
+    container_name: backend
     # build:
     #   context: ../backend
     #   dockerfile: Dockerfile
@@ -31,7 +31,7 @@ services:
 
   frontend:
     image: mongolfierad/foodgram_frontend:latest
-    container_name: foodgram_frontend
+    container_name: frontend
     # build:
     #   context: ../frontend
     #   dockerfile: Dockerfile

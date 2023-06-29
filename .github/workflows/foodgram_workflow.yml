@@ -76,7 +76,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           sudo docker compose stop
-          sudo docker compose rm foodgram_backend foodgram_frontend
+          sudo docker compose rm backend frontend
           sudo docker compose rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_fronend:latest
           sudo docker compose rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
@@ -91,10 +91,10 @@ jobs:
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
 
           sudo docker compose up -d
-          sudo docker compose exec foodgram_backend python manage.py makemigrations users
-          sudo docker compose exec foodgram_backend python manage.py makemigrations recipes
-          sudo docker compose exec foodgram_backend python manage.py migrate
-          sudo docker compose exec foodgram_backend python manage.py collectstatic --no-input
+          sudo docker compose exec backend python manage.py makemigrations users
+          sudo docker compose exec backend python manage.py makemigrations recipes
+          sudo docker compose exec backend python manage.py migrate
+          sudo docker compose exec backend python manage.py collectstatic --no-input
 
 
   send_message:
