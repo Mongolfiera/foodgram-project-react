@@ -13,11 +13,11 @@ SECRET_KEY = os.getenv(
     default='django-insecure-t$-dj9im4)ofg33ph^t8ijtk@13g!isqi(0dzz*zqf5$xtssj%',
 )
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'https://*.127.0.0.1', 'http://158.160.72.168']
 
 CORS_ORIGIN_ALLOW_ALL = True
 
