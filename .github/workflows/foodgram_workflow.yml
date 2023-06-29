@@ -75,7 +75,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          sudo docker compose stop
+          sudo docker compose stop backend frontend
           sudo docker compose rm backend frontend
           sudo docker compose rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_fronend:latest
           sudo docker compose rmi ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
