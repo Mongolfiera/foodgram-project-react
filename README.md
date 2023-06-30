@@ -1,4 +1,4 @@
-![example workflow](https://github.com/mongolfiera/yamdb_final/actions/workflows/foodgram_workflow.yml/badge.svg)
+![example workflow](https://github.com/mongolfiera/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 # Foodgram «Продуктовый помощник»
 *На этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.*
