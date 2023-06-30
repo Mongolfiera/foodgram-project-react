@@ -10,12 +10,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv(
     'SECRET_KEY',
-    default='django-insecure-t$-dj9im4)ofg33ph^t8ijtk@13g!isqi(0dzz*zqf5$xtssj%',
 )
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '158.160.72.168']
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'https://*.127.0.0.1', 'http://158.160.72.168']
 
