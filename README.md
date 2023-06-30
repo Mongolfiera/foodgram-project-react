@@ -1,5 +1,30 @@
+![example workflow](https://github.com/mongolfiera/yamdb_final/actions/workflows/foodgram_workflow.yml/badge.svg)
+
 # Foodgram «Продуктовый помощник»
 *На этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.*
+
+[Foodgram - продуктовый помощник](http://158.160.72.168/)
+
+Документация к API доступна по [ссылке](http://158.160.72.168/api/docs/)
+
+
+## Мотивация
+
+Сервис был написан как Дипломный Проект Курса «Python-разработчик» в [Яндекс Практикум](https://practicum.yandex.ru/).
+
+
+## Технологии/Фреймворки
+
+![Python version](https://img.shields.io/badge/Python-3.7-3670A0?style=plastic&logo=python&logoColor=ffdd54)
+![Django version](https://img.shields.io/badge/Django-3.2-%23092E20.svg?style=plastic&logo=django&logoColor=white)
+![DjangoREST version](https://img.shields.io/badge/DjangoREST-3.12-ff1709?style=plastic&logo=django&logoColor=white&color=ff1709&labelColor=gray)
+![Requests version](https://img.shields.io/badge/Requests-2.26-006ADA?style=plastic&logo=PyPI&logoColor=ffdd54)
+![Djoser version](https://img.shields.io/badge/Djoser-2.1-3670A0?style=plastic&logo=PyPI&logoColor=ffdd54)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=plastic&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=plastic&logo=docker&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=plastic&logo=gunicorn&logoColor=white)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=plastic&logo=nginx&logoColor=white)
+
 
 ## Сервисы и страницы проекта
 
@@ -67,3 +92,108 @@
 - Редактировать/удалять любые рецепты,
 - Добавлять/удалять/редактировать ингредиенты.
 - Добавлять/удалять/редактировать теги.
+
+## Как запустить проект:
+
+### Workflow
+* tests - проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8) и запуск pytest
+* build_and_push_to_docker_hub - сборка и доставка докер-образа для контейнера web на Docker Hub
+* deploy - автоматический деплой проекта на боевой сервер
+* send_message - отправка уведомления в Telegram о том, что процесс деплоя успешно завершился
+
+
+Клонируйте репозиторий и перейдите в него:
+```bash
+git clone git@github.com:Mongolfiera/foodgram-project-react.git
+```
+
+Добавьте в Settings -> Secrets -> Actions secrets переменные окружения:
+```
+DOCKER_USERNAME - имя пользователя в DockerHub в нижнем регистре
+DOCKER_PASSWORD - пароль пользователя в DockerHub
+SECRET_KEY - секретный ключ Django проекта
+HOST - ip-адрес сервера
+USER - имя пользователя для подключения к серверу
+SSH_KEY - приватный ключ с компьютера, имеющего доступ к серверу
+PASSPHRASE - фраза-пароль для ssh-ключа
+TELEGRAM_TO - ID телеграм-аккаунта (узнать свой ID можно у бота @userinfobot)
+TELEGRAM_TOKEN - токен бота (получить токен можно у бота @BotFather)
+DB_NAME - postgres
+DB_ENGINE - django.db.backends.postgresql
+DB_HOST - db
+DB_PORT - 5432
+POSTGRES_USER - postgres
+POSTGRES_PASSWORD - postgres
+```
+
+### Подготовка сервера
+
+Остановите службу nginx:
+```bash
+sudo systemctl stop nginx 
+```
+Устанавите обновления:
+```bash
+sudo apt update
+sudo apt upgrade -y 
+```
+
+Установите docker:
+```bash
+sudo apt install docker.io 
+```
+Установите docker-compose (для всех пользователей):
+```bash
+sudo mkdir -p /usr/local/lib/docker/cli-plugins
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
+sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+```
+Проверьте корректность установки docker-compose (в ответе должна быть версия): 
+```bash
+docker compose version
+```
+
+Скопируйте вручную файлы docker-compose.yaml и default.conf на сервер:
+```bash
+cd infra
+scp docker-compose.yaml default.conf <username>@<host>:/home/<username>/
+```
+
+### Запуск проекта
+
+Выполнить миграции
+```bash
+docker compose exec backend python manage.py makemigrations users
+docker compose exec backend python manage.py makemigrations recipes
+docker compose exec backend python manage.py migrate
+```
+
+Создать суперпользователя
+```bash
+docker compose exec backend python manage.py createsuperuser 
+```
+
+Загрузить статику
+```bash
+docker compose exec backend python manage.py collectstatic --no-input 
+```
+
+Для заполнения базы ингредиентами можно использовать команду
+```bash
+docker compose exec backend python manage.py load_data
+```
+
+Для создания тегов ("Зактрак", "Обед", "Ужин") можно использовать команду
+```bash
+docker compose exec backend python manage.py load_tags
+```
+
+Остановить работу всех контейнеров
+```bash
+docker compose down -v
+```
+
+
+## Лицензия
+
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
